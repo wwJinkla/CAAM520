@@ -19,42 +19,27 @@ int main(int argc, char **argv){
   // variable to store the MPI rank of this process
   // rank signifies a unique integer identifier (0-indexed)
   int rank;
-
+  int tag = 999;
+  
   // start MPI environment
   MPI_Init(&argc, &argv);
 
   // find rank (number of this process)
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
-  // send the message if you are process 0
-  if(rank==0){
-    // message
-    int N = 1;
-    int *message = (int*) calloc(1, sizeof(int));
-    int destination = 1;
-    int tag = 999;
-
-    message[0] = 42;
-
-    // send message 
-    MPI_Send(message, N, MPI_INT, destination, tag, MPI_COMM_WORLD);
-  }
-
-  // receive the message if you are process 1
-  if(rank==1){
-    // message
-    int N = 1;
-    int *message = (int*) calloc(1, sizeof(int));
-    int origin = 0;
-    int tag = 999;
-    MPI_Status status;
-
-    // receive message 
-    MPI_Recv(message, N, MPI_INT, origin, tag, MPI_COMM_WORLD, 
-	     &status);
-
-    printf("Process %d got from rank %d the message: %d\n", 
-	   rank, origin, message[0]);
+  int ping_pong = 0;
+  int partner_rank = (rank + 1) % 2;
+  while(ping_pong <= 10){
+    if (rank == ping_pong % 2){
+      ping_pong += 1;
+      MPI_Send(&ping_pong, 1, MPI_INT, partner_rank, tag, MPI_COMM_WORLD);
+      printf("rank %d incremented and sent ping_pong=%d to rank %d\n",
+	     rank, ping_pong, partner_rank);
+    } else {
+      MPI_Recv(&ping_pong, 1, MPI_INT, partner_rank, tag, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+      printf("rank %d received ping_pong=%d from %d\n",
+	     rank, ping_pong, partner_rank);
+    }    
   }
 
   // close down MPI environment
