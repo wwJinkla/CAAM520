@@ -5,11 +5,9 @@
 // include headers for MPI definitions
 #include <mpi.h>
 
-// purpose: demonstrate 
-//          1. sending a message from process 0 to process 2
-//          2. receiving a message by process 2 from process 0
-// 
-//          using MPI functions MPI_Send and 
+// purpose: construct a "ping-pong" MPI program with 2 ranks 
+// which sends a ping_pong variable between each rank, incrementing 
+// it until ping_pong is larger than 10. 
 
 // main program - we need those input args
 int main(int argc, char **argv){
