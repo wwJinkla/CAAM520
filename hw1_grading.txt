@@ -1,0 +1,17 @@
+Homework:  #1
+Student:   Wei Wu
+GitHub ID: wwJinkla
+
+Points: 84/99
+
+== Code and documentation ==
+- Please document your code in the report. Use code snippets.
+  (-5 pts.)
+
+== Verification and operation counts ==
+- Please explain how you obtained the operation counts. Each Jacobi iteration
+  will clearly require more than seven operations.
+  (-10 pts.)
+
+== Documentation of number of iterations, timings, and scaling results ==
+Everything looks okay, no further remarks.
