@@ -18,13 +18,13 @@ int main(int argc, char **argv){
 
   int N;
 
-#if 0
+//#if 0
   // 1) MPI_Allreduce: reduce and resend
   int x_send = rank;
   int x_reduce;
   MPI_Allreduce(&x_send, &x_reduce, 1, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
   printf("MPI_Allreduce result on rank %d: %d\n", rank, x_reduce);
-#endif
+//#endif
 
 #if 0
   // 2) MPI_Allgather
@@ -48,7 +48,7 @@ int main(int argc, char **argv){
   free(x_gather);
 #endif
   
-//#if 0
+#if 0
   // 3) MPI_Alltoall
   N = 1;
   int * alltoallmsg = (int *) calloc(N*size,sizeof(int));
@@ -88,7 +88,7 @@ int main(int argc, char **argv){
 
   free(alltoallmsg);
   free(alltoallrecv);
-//#endif
+#endif
   
   MPI_Finalize();
 }
