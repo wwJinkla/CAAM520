@@ -3,10 +3,10 @@
 #include <stdlib.h>
 #include <omp.h>
 // TO compile: 
-//    gcc -O3 -o hw01 hw01.c -lm
+//    gcc -fopemp -o hw03 hw03.c -lm
 
-// TO run with tolerance 1e-4 and 4x4 loop currents
-//    ./hw03 4 1e-4
+// TO run with tolerance 1e-4 and 4x4 loop currents with 2 threads
+//    ./hw03 4 1e-4 2
 
 #define PI 3.14159265359
 #define MAX(a,b) (((a)>(b))?(a):(b))
