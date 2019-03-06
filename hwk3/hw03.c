@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <omp.h>
 // TO compile: 
-//    gcc -fopemp -o hw03 hw03.c -lm
+//    gcc -fopenmp -o hw03 hw03.c -lm
 
 // TO run with tolerance 1e-4 and 4x4 loop currents with 2 threads
 //    ./hw03 4 1e-4 2
