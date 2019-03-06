@@ -1,0 +1,175 @@
+at iter 500: residual = 1.69181e-06
+N: 32
+n_threads: 1
+Iters: 529
+Max error: 0.000149701
+Time: 0.00983288
+-------------------------
+at iter 500: residual = 1.69181e-06
+N: 32
+n_threads: 2
+Iters: 529
+Max error: 0.000149701
+Time: 0.00761996
+-------------------------
+at iter 500: residual = 1.69181e-06
+N: 32
+n_threads: 4
+Iters: 529
+Max error: 0.000149701
+Time: 0.00778023
+-------------------------
+at iter 500: residual = 1.69181e-06
+N: 32
+n_threads: 8
+Iters: 529
+Max error: 0.000149701
+Time: 0.00636196
+-------------------------
+at iter 500: residual = 1.69181e-06
+N: 32
+n_threads: 16
+Iters: 529
+Max error: 0.000149701
+Time: 0.0144027
+-------------------------
+at iter 500: residual = 0.000744719
+at iter 1000: residual = 7.17623e-05
+at iter 1500: residual = 6.91513e-06
+N: 64
+n_threads: 1
+Iters: 1914
+Max error: 3.29097e-05
+Time: 0.133607
+-------------------------
+at iter 500: residual = 0.000744719
+at iter 1000: residual = 7.17623e-05
+at iter 1500: residual = 6.91513e-06
+N: 64
+n_threads: 2
+Iters: 1914
+Max error: 3.29097e-05
+Time: 0.0907296
+-------------------------
+at iter 500: residual = 0.000744719
+at iter 1000: residual = 7.17623e-05
+at iter 1500: residual = 6.91513e-06
+N: 64
+n_threads: 4
+Iters: 1914
+Max error: 3.29097e-05
+Time: 0.0672218
+-------------------------
+at iter 500: residual = 0.000744719
+at iter 1000: residual = 7.17623e-05
+at iter 1500: residual = 6.91513e-06
+N: 64
+n_threads: 8
+Iters: 1914
+Max error: 3.29097e-05
+Time: 0.0659042
+-------------------------
+at iter 500: residual = 0.000744719
+at iter 1000: residual = 7.17623e-05
+at iter 1500: residual = 6.91513e-06
+N: 64
+n_threads: 16
+Iters: 1914
+Max error: 3.29097e-05
+Time: 0.0614588
+-------------------------
+at iter 500: residual = 0.00214397
+at iter 1000: residual = 0.00118452
+at iter 1500: residual = 0.00065443
+at iter 2000: residual = 0.000361565
+at iter 2500: residual = 0.00019976
+at iter 3000: residual = 0.000110365
+at iter 3500: residual = 6.09752e-05
+at iter 4000: residual = 3.36881e-05
+at iter 4500: residual = 1.86122e-05
+at iter 5000: residual = 1.0283e-05
+at iter 5500: residual = 5.68125e-06
+at iter 6000: residual = 3.13882e-06
+at iter 6500: residual = 1.73416e-06
+N: 128
+n_threads: 1
+Iters: 6964
+Max error: 3.03937e-06
+Time: 2.07492
+-------------------------
+at iter 500: residual = 0.00214397
+at iter 1000: residual = 0.00118452
+at iter 1500: residual = 0.00065443
+at iter 2000: residual = 0.000361565
+at iter 2500: residual = 0.00019976
+at iter 3000: residual = 0.000110365
+at iter 3500: residual = 6.09752e-05
+at iter 4000: residual = 3.36881e-05
+at iter 4500: residual = 1.86122e-05
+at iter 5000: residual = 1.0283e-05
+at iter 5500: residual = 5.68125e-06
+at iter 6000: residual = 3.13882e-06
+at iter 6500: residual = 1.73416e-06
+N: 128
+n_threads: 2
+Iters: 6964
+Max error: 3.03937e-06
+Time: 1.30382
+-------------------------
+at iter 500: residual = 0.00214397
+at iter 1000: residual = 0.00118452
+at iter 1500: residual = 0.00065443
+at iter 2000: residual = 0.000361565
+at iter 2500: residual = 0.00019976
+at iter 3000: residual = 0.000110365
+at iter 3500: residual = 6.09752e-05
+at iter 4000: residual = 3.36881e-05
+at iter 4500: residual = 1.86122e-05
+at iter 5000: residual = 1.0283e-05
+at iter 5500: residual = 5.68125e-06
+at iter 6000: residual = 3.13882e-06
+at iter 6500: residual = 1.73416e-06
+N: 128
+n_threads: 4
+Iters: 6964
+Max error: 3.03937e-06
+Time: 0.872488
+-------------------------
+at iter 500: residual = 0.00214397
+at iter 1000: residual = 0.00118452
+at iter 1500: residual = 0.00065443
+at iter 2000: residual = 0.000361565
+at iter 2500: residual = 0.00019976
+at iter 3000: residual = 0.000110365
+at iter 3500: residual = 6.09752e-05
+at iter 4000: residual = 3.36881e-05
+at iter 4500: residual = 1.86122e-05
+at iter 5000: residual = 1.0283e-05
+at iter 5500: residual = 5.68125e-06
+at iter 6000: residual = 3.13882e-06
+at iter 6500: residual = 1.73416e-06
+N: 128
+n_threads: 8
+Iters: 6964
+Max error: 3.03937e-06
+Time: 0.650239
+-------------------------
+at iter 500: residual = 0.00214397
+at iter 1000: residual = 0.00118452
+at iter 1500: residual = 0.00065443
+at iter 2000: residual = 0.000361565
+at iter 2500: residual = 0.00019976
+at iter 3000: residual = 0.000110365
+at iter 3500: residual = 6.09752e-05
+at iter 4000: residual = 3.36881e-05
+at iter 4500: residual = 1.86122e-05
+at iter 5000: residual = 1.0283e-05
+at iter 5500: residual = 5.68125e-06
+at iter 6000: residual = 3.13882e-06
+at iter 6500: residual = 1.73416e-06
+N: 128
+n_threads: 16
+Iters: 6964
+Max error: 3.03937e-06
+Time: 0.693178
+-------------------------

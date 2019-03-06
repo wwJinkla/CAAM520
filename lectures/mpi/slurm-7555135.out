@@ -1,0 +1,4 @@
+Matrix size = 2048, number of ranks = 1, total elapsed time = 0.00397344
+Matrix size = 2048, number of ranks = 2, total elapsed time = 0.00392604
+Matrix size = 2048, number of ranks = 4, total elapsed time = 0.00419793
+Matrix size = 2048, number of ranks = 8, total elapsed time = 0.00466585

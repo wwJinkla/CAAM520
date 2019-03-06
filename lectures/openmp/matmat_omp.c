@@ -21,11 +21,11 @@ int main (int argc, char **argv){
   double elapsed, start, end;
   start = omp_get_wtime();
 
-  // #pragma omp parallel for
+  #pragma omp parallel for
   for (int i = 0; i < N; ++i){
     for (int j = 0; j < N; ++j){
       for (int k = 0; k < N; ++k){	
-       C[i+j*N] += A[i+k*N]*B[j+k*N];
+       C[i+j*N] += A[k+i*N]*B[j+k*N];
       }
     }
   }
