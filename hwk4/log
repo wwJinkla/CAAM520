@@ -1,0 +1,384 @@
+p_Nthreads = 32
+
+Threads/block = 32*32 = 1024
+
+nvprof --metrics dram_write_throughput,flop_count_sp,dram_read_throughput  ./hw04 2 1e-6
+==51749== NVPROF is profiling process 51749, command: ./hw04 2 1e-6
+==51749== Warning: Some kernel(s) will be replayed on device 0 in order to collect all events/metrics.
+Iters: 19
+Max error: 0.0175602
+==51749== Profiling application: ./hw04 2 1e-6
+==51749== Profiling result:
+==51749== Metric result:
+Invocations                               Metric Name                        Metric Description         Min         Max         Avg
+Device "Tesla K80 (0)"
+	Kernel: reduce2(int, float*, float*, float*)
+         19                     dram_write_throughput            Device Memory Write Throughput  9.3322MB/s  28.482MB/s  17.318MB/s
+         19                             flop_count_sp  Floating Point Operations(Single Precisi          63          63          63
+         19                      dram_read_throughput             Device Memory Read Throughput  0.00000B/s  0.00000B/s  0.00000B/s
+	Kernel: Jacobi(float*, float*, float*, int)
+         19                     dram_write_throughput            Device Memory Write Throughput  15.873MB/s  37.634MB/s  24.966MB/s
+         19                             flop_count_sp  Floating Point Operations(Single Precisi          20          20          20
+         19                      dram_read_throughput             Device Memory Read Throughput  0.00000B/s  10.381MB/s  546.38KB/s
+
+==============================================================================================================================
+nvprof --metrics dram_write_throughput,flop_count_sp,dram_read_throughput  ./hw04 10 1e-6
+==51806== NVPROF is profiling process 51806, command: ./hw04 10 1e-6
+==51806== Warning: Some kernel(s) will be replayed on device 0 in order to collect all events/metrics.
+Iters: 64
+Max error: 0.00137102
+==51806== Profiling application: ./hw04 10 1e-6
+==51806== Profiling result:
+==51806== Metric result:
+Invocations                               Metric Name                        Metric Description         Min         Max         Avg
+Device "Tesla K80 (0)"
+	Kernel: reduce2(int, float*, float*, float*)
+         64                     dram_write_throughput            Device Memory Write Throughput  9.1888MB/s  37.559MB/s  21.882MB/s
+         64                             flop_count_sp  Floating Point Operations(Single Precisi         443         443         443
+         64                      dram_read_throughput             Device Memory Read Throughput  0.00000B/s  46.838MB/s  731.85KB/s
+	Kernel: Jacobi(float*, float*, float*, int)
+         64                     dram_write_throughput            Device Memory Write Throughput  123.29MB/s  396.63MB/s  259.91MB/s
+         64                             flop_count_sp  Floating Point Operations(Single Precisi         500         500         500
+         64                      dram_read_throughput             Device Memory Read Throughput  0.00000B/s  10.204MB/s  159.44KB/s
+
+
+===============================================================================================================================
+==56361== Profiling application: ./hw04 100 1e-6
+==56361== Profiling result:
+Time(%)      Time     Calls       Avg       Min       Max  Name
+ 47.11%  31.612ms      4414  7.1610us  7.0720us  8.3840us  reduce2(int, float*, float*, float*)
+ 32.60%  21.873ms      4414  4.9550us  4.8320us  9.3750us  Jacobi(float*, float*, float*, int)
+ 20.24%  13.584ms      4415  3.0760us  2.8480us  13.439us  [CUDA memcpy DtoH]
+  0.05%  32.382us         3  10.794us  10.751us  10.879us  [CUDA memcpy HtoD]
+
+
+at iter 500: residual = 0.00188379
+at iter 1000: residual = 0.000715443
+at iter 1500: residual = 0.000271719
+at iter 2000: residual = 0.00010319
+at iter 2500: residual = 3.91923e-05
+at iter 3000: residual = 1.48879e-05
+at iter 3500: residual = 5.65518e-06
+at iter 4000: residual = 2.15597e-06
+Iters: 4414
+Max error: 6.491e-06
+==51850== Profiling application: ./hw04 100 1e-6
+==51850== Profiling result:
+==51850== Metric result:
+Invocations                               Metric Name                        Metric Description         Min         Max         Avg
+Device "Tesla K80 (0)"
+	Kernel: reduce2(int, float*, float*, float*)
+       4414                     dram_write_throughput            Device Memory Write Throughput  274.80MB/s  431.90MB/s  352.69MB/s
+       4414                             flop_count_sp  Floating Point Operations(Single Precisi       30914       30914       30914
+       4414                      dram_read_throughput             Device Memory Read Throughput  0.00000B/s  236.68MB/s  46.016MB/s
+	Kernel: Jacobi(float*, float*, float*, int)
+       4414                     dram_write_throughput            Device Memory Write Throughput  6.9935GB/s  17.934GB/s  14.082GB/s
+       4414                             flop_count_sp  Floating Point Operations(Single Precisi       50000       50000       50000
+       4414                      dram_read_throughput             Device Memory Read Throughput  0.00000B/s  533.33MB/s  193.68MB/s
+
+=========================================================================================================================
+
+==56163== Profiling application: ./hw04 200 1e-6
+==56163== Profiling result:
+Time(%)      Time     Calls       Avg       Min       Max  Name
+ 58.48%  305.65ms     16295  18.757us  18.591us  19.200us  reduce2(int, float*, float*, float*)
+ 30.08%  157.22ms     16295  9.6480us  8.9600us  10.752us  Jacobi(float*, float*, float*, int)
+ 11.43%  59.735ms     16296  3.6650us  3.4240us  25.311us  [CUDA memcpy DtoH]
+  0.01%  74.236us         3  24.745us  23.263us  26.494us  [CUDA memcpy HtoD]
+
+
+ nvprof --metrics dram_write_throughput,flop_count_sp,dram_read_throughput  ./hw04 200 1e-6
+==52893== NVPROF is profiling process 52893, command: ./hw04 200 1e-6
+==52893== Warning: Some kernel(s) will be replayed on device 0 in order to collect all events/metrics.
+at iter 500: residual = 0.00194928
+at iter 1000: residual = 0.00152673
+at iter 1500: residual = 0.00119578
+at iter 2000: residual = 0.000936569
+at iter 2500: residual = 0.000733544
+at iter 3000: residual = 0.000574535
+at iter 3500: residual = 0.000449994
+at iter 4000: residual = 0.000352446
+at iter 4500: residual = 0.000276048
+at iter 5000: residual = 0.000216211
+at iter 5500: residual = 0.000169343
+at iter 6000: residual = 0.000132634
+at iter 6500: residual = 0.000103881
+at iter 7000: residual = 8.13652e-05
+at iter 7500: residual = 6.37263e-05
+at iter 8000: residual = 4.99126e-05
+at iter 8500: residual = 3.90953e-05
+at iter 9000: residual = 3.06254e-05
+at iter 9500: residual = 2.39871e-05
+at iter 10000: residual = 1.87896e-05
+at iter 10500: residual = 1.47197e-05
+at iter 11000: residual = 1.15351e-05
+at iter 11500: residual = 9.03525e-06
+at iter 12000: residual = 7.08923e-06
+at iter 12500: residual = 5.56405e-06
+at iter 13000: residual = 4.3643e-06
+at iter 13500: residual = 3.43105e-06
+at iter 14000: residual = 2.70916e-06
+at iter 14500: residual = 2.14905e-06
+at iter 15000: residual = 1.71794e-06
+at iter 15500: residual = 1.35665e-06
+at iter 16000: residual = 1.11483e-06
+Iters: 16295
+Max error: 1.35773e-05
+==52893== Profiling application: ./hw04 200 1e-6
+==52893== Profiling result:
+==52893== Metric result:
+Invocations                               Metric Name                        Metric Description         Min         Max         Avg
+Device "Tesla K80 (0)"
+	Kernel: reduce2(int, float*, float*, float*)
+      16295                     dram_write_throughput            Device Memory Write Throughput  378.05MB/s  562.80MB/s  503.20MB/s
+      16295                             flop_count_sp  Floating Point Operations(Single Precisi      121164      121164      121164
+      16295                      dram_read_throughput             Device Memory Read Throughput  0.00000B/s  219.51MB/s  24.067MB/s
+	Kernel: Jacobi(float*, float*, float*, int)
+      16295                     dram_write_throughput            Device Memory Write Throughput  18.359GB/s  21.045GB/s  19.500GB/s
+      16295                             flop_count_sp  Floating Point Operations(Single Precisi      200000      200000      200000
+      16295                      dram_read_throughput             Device Memory Read Throughput  0.00000B/s  579.31MB/s  119.75MB/s
+
+=========================================================================================================================
+
+ nvprof ./hw04 300 1e-6
+==59564== NVPROF is profiling process 59564, command: ./hw04 300 1e-6
+at iter 500: residual = 0.00149
+at iter 1000: residual = 0.0013362
+at iter 1500: residual = 0.00119828
+at iter 2000: residual = 0.0010746
+at iter 2500: residual = 0.000963678
+at iter 3000: residual = 0.000864211
+at iter 3500: residual = 0.000775007
+at iter 4000: residual = 0.000695012
+at iter 4500: residual = 0.000623272
+at iter 5000: residual = 0.000558941
+at iter 5500: residual = 0.00050125
+at iter 6000: residual = 0.000449509
+at iter 6500: residual = 0.000403116
+at iter 7000: residual = 0.000361506
+at iter 7500: residual = 0.000324191
+at iter 8000: residual = 0.00029073
+at iter 8500: residual = 0.000260721
+at iter 9000: residual = 0.00023381
+at iter 9500: residual = 0.000209673
+at iter 10000: residual = 0.000188034
+at iter 10500: residual = 0.000168622
+at iter 11000: residual = 0.000151221
+at iter 11500: residual = 0.000135611
+at iter 12000: residual = 0.000121616
+at iter 12500: residual = 0.000109063
+at iter 13000: residual = 9.78071e-05
+at iter 13500: residual = 8.77097e-05
+at iter 14000: residual = 7.86596e-05
+at iter 14500: residual = 7.05415e-05
+at iter 15000: residual = 6.3261e-05
+at iter 15500: residual = 5.67313e-05
+at iter 16000: residual = 5.08778e-05
+at iter 16500: residual = 4.56272e-05
+at iter 17000: residual = 4.09157e-05
+at iter 17500: residual = 3.66977e-05
+at iter 18000: residual = 3.29122e-05
+at iter 18500: residual = 2.95164e-05
+at iter 19000: residual = 2.64722e-05
+at iter 19500: residual = 2.37425e-05
+at iter 20000: residual = 2.12949e-05
+at iter 20500: residual = 1.91007e-05
+at iter 21000: residual = 1.71315e-05
+at iter 21500: residual = 1.53676e-05
+at iter 22000: residual = 1.37886e-05
+at iter 22500: residual = 1.23645e-05
+at iter 23000: residual = 1.11029e-05
+at iter 23500: residual = 9.95607e-06
+at iter 24000: residual = 8.9333e-06
+at iter 24500: residual = 8.02542e-06
+at iter 25000: residual = 7.20462e-06
+at iter 25500: residual = 6.45791e-06
+at iter 26000: residual = 5.80358e-06
+at iter 26500: residual = 5.21191e-06
+at iter 27000: residual = 4.68351e-06
+at iter 27500: residual = 4.21278e-06
+at iter 28000: residual = 3.79078e-06
+at iter 28500: residual = 3.41753e-06
+at iter 29000: residual = 3.06963e-06
+at iter 29500: residual = 2.76718e-06
+at iter 30000: residual = 2.54288e-06
+at iter 30500: residual = 2.32862e-06
+at iter 31000: residual = 2.05922e-06
+at iter 31500: residual = 1.89414e-06
+at iter 32000: residual = 1.72871e-06
+at iter 32500: residual = 1.59816e-06
+at iter 33000: residual = 1.47504e-06
+at iter 33500: residual = 1.37441e-06
+at iter 34000: residual = 1.24463e-06
+at iter 34500: residual = 1.13575e-06
+at iter 35000: residual = 1.06589e-06
+Iters: 35407
+Max error: 2.09378e-05
+==59564== Profiling application: ./hw04 300 1e-6
+==59564== Profiling result:
+Time(%)      Time     Calls       Avg       Min       Max  Name
+ 63.53%  1.33038s     35407  37.573us  36.798us  37.919us  reduce2(int, float*, float*, float*)
+ 28.49%  596.55ms     35407  16.848us  16.256us  18.912us  Jacobi(float*, float*, float*, int)
+  7.98%  167.08ms     35408  4.7180us  4.3510us  52.446us  [CUDA memcpy DtoH]
+  0.01%  161.85us         3  53.949us  50.686us  57.277us  [CUDA memcpy HtoD]
+
+==59564== API calls:
+Time(%)      Time     Calls       Avg       Min       Max  Name
+ 46.79%  11.7406s     35410  331.56us  9.7570us  237.22ms  cudaMalloc
+ 37.93%  9.51710s     35410  268.77us  13.504us  1.0542ms  cudaFree
+ 10.03%  2.51719s     35411  71.084us  36.706us  486.74us  cudaMemcpy
+  4.43%  1.11151s     70814  15.696us  14.554us  837.30us  cudaLaunch
+  0.54%  135.97ms    283256     480ns     355ns  470.13us  cudaSetupArgument
+  0.21%  51.576ms     70814     728ns     641ns  461.24us  cudaConfigureCall
+  0.08%  18.924ms     35407     534ns     490ns  13.634us  cudaGetLastError
+  0.00%  1.0629ms        83  12.805us     369ns  491.29us  cuDeviceGetAttribute
+  0.00%  190.88us         1  190.88us  190.88us  190.88us  cuDeviceTotalMem
+  0.00%  106.08us         1  106.08us  106.08us  106.08us  cuDeviceGetName
+  0.00%  4.4630us         2  2.2310us     921ns  3.5420us  cuDeviceGetCount
+  0.00%  1.0420us         2     521ns     487ns     555ns  cuDeviceGet
+
+==============================================================
+ nvprof --metrics dram_write_throughput,dram_read_throughput,flop_count_sp ./hw04 150 1e-6 
+==1468== NVPROF is profiling process 1468, command: ./hw04 150 1e-6
+==1468== Warning: Some kernel(s) will be replayed on device 0 in order to collect all events/metrics.
+at iter 500: residual = 0.00214945
+at iter 1000: residual = 0.00139407
+at iter 1500: residual = 0.000904161
+at iter 2000: residual = 0.000586411
+at iter 2500: residual = 0.000380328
+at iter 3000: residual = 0.000246669
+at iter 3500: residual = 0.000159984
+at iter 4000: residual = 0.000103763
+at iter 4500: residual = 6.7301e-05
+at iter 5000: residual = 4.3647e-05
+at iter 5500: residual = 2.83127e-05
+at iter 6000: residual = 1.83633e-05
+at iter 6500: residual = 1.19102e-05
+at iter 7000: residual = 7.73036e-06
+at iter 7500: residual = 5.01584e-06
+at iter 8000: residual = 3.26342e-06
+at iter 8500: residual = 2.13426e-06
+at iter 9000: residual = 1.4242e-06
+Iters: 9423
+Max error: 7.07058e-06
+==1468== Profiling application: ./hw04 150 1e-6
+==1468== Profiling result:
+==1468== Metric result:
+Invocations                               Metric Name                        Metric Description         Min         Max         Avg
+Device "Tesla K80 (0)"
+	Kernel: reduce2(int, float*, float*, float*)
+       9423                     dram_write_throughput            Device Memory Write Throughput  362.50MB/s  497.05MB/s  423.72MB/s
+       9423                      dram_read_throughput             Device Memory Read Throughput  0.00000B/s  248.31MB/s  31.064MB/s
+       9423                             flop_count_sp  Floating Point Operations(Single Precisi       68590       68590       68590
+	Kernel: Jacobi(float*, float*, float*, int)
+       9423                     dram_write_throughput            Device Memory Write Throughput  13.031GB/s  16.952GB/s  14.806GB/s
+       9423                      dram_read_throughput             Device Memory Read Throughput  0.00000B/s  970.80MB/s  475.12MB/s
+       9423                             flop_count_sp  Floating Point Operations(Single Precisi      112500      112500      112500
+
+
+==2734== Profiling application: ./hw04 150 1e-6
+==2734== Profiling result:
+Time(%)      Time     Calls       Avg       Min       Max  Name
+ 56.06%  111.97ms      9423  11.882us  11.775us  12.320us  reduce2(int, float*, float*, float*)
+ 28.01%  55.946ms      9423  5.9370us  5.7910us  10.528us  Jacobi(float*, float*, float*, int)
+ 15.91%  31.783ms      9424  3.3720us  3.0720us  16.287us  [CUDA memcpy DtoH]
+  0.02%  47.005us         3  15.668us  14.751us  17.055us  [CUDA memcpy HtoD]
+
+==2734== API calls:
+Time(%)      Time     Calls       Avg       Min       Max  Name
+ 50.82%  3.39828s      9426  360.52us  5.4660us  240.02ms  cudaMalloc
+ 38.77%  2.59288s      9426  275.08us  7.7950us  794.54us  cudaFree
+  5.05%  337.67ms      9427  35.819us  28.354us  81.724us  cudaMemcpy
+  4.53%  302.77ms     18846  16.065us  14.755us  492.04us  cudaLaunch
+  0.52%  35.010ms     75384     464ns     354ns  486.00us  cudaSetupArgument
+  0.21%  13.894ms     18846     737ns     601ns  448.27us  cudaConfigureCall
+  0.08%  5.2106ms      9423     552ns     497ns  13.728us  cudaGetLastError
+  0.02%  1.0885ms        83  13.113us     366ns  484.92us  cuDeviceGetAttribute
+  0.00%  195.10us         1  195.10us  195.10us  195.10us  cuDeviceTotalMem
+  0.00%  122.64us         1  122.64us  122.64us  122.64us  cuDeviceGetName
+  0.00%  4.0080us         2  2.0040us     901ns  3.1070us  cuDeviceGetCount
+  0.00%  1.3110us         2     655ns     625ns     686ns  cuDeviceGet
+
+
+
+
+
+
+p_Nthreads = 16
+
+Max error: 6.491e-06
+==3403== Profiling application: ./hw04-16 100 1e-6
+==3403== Profiling result:
+Time(%)      Time     Calls       Avg       Min       Max  Name
+ 55.95%  46.088ms      4414  10.441us  10.367us  10.880us  reduce2(int, float*, float*, float*)
+ 26.22%  21.601ms      4414  4.8930us  4.7360us  9.1190us  Jacobi(float*, float*, float*, int)
+ 17.78%  14.650ms      4415  3.3180us  3.0710us  12.704us  [CUDA memcpy DtoH]
+  0.04%  32.511us         3  10.837us  10.783us  10.912us  [CUDA memcpy HtoD]
+
+Iters: 4414
+Max error: 6.491e-06
+==3454== Profiling application: ./hw04-16 100 1e-6
+==3454== Profiling result:
+==3454== Metric result:
+Invocations                               Metric Name                        Metric Description         Min         Max         Avg
+Device "Tesla K80 (0)"
+	Kernel: reduce2(int, float*, float*, float*)
+       4414                     dram_write_throughput            Device Memory Write Throughput  314.26MB/s  468.14MB/s  404.15MB/s
+       4414                      dram_read_throughput             Device Memory Read Throughput  0.00000B/s  187.35MB/s  34.044MB/s
+       4414                             flop_count_sp  Floating Point Operations(Single Precisi       30573       30573       30573
+	Kernel: Jacobi(float*, float*, float*, int)
+       4414                     dram_write_throughput            Device Memory Write Throughput  8.8705GB/s  21.440GB/s  15.983GB/s
+       4414                      dram_read_throughput             Device Memory Read Throughput  0.00000B/s  723.19MB/s  309.13MB/s
+       4414                             flop_count_sp  Floating Point Operations(Single Precisi       50000       50000       50000
+
+=================================================================================
+==4275== Profiling application: ./hw04-16 150 1e-6
+==5406== Profiling result:
+Time(%)      Time     Calls       Avg       Min       Max  Name
+ 63.12%  170.75ms      9423  18.120us  17.983us  18.719us  reduce2(int, float*, float*, float*)
+ 23.79%  64.363ms      9423  6.8300us  6.6550us  8.6080us  Jacobi(float*, float*, float*, int)
+ 13.08%  35.376ms      9424  3.7530us  3.6160us  15.999us  [CUDA memcpy DtoH]
+  0.02%  47.293us         3  15.764us  14.975us  17.055us  [CUDA memcpy HtoD]
+
+
+Max error: 7.07058e-06
+==4275== Profiling application: ./hw04-16 150 1e-6
+==4275== Profiling result:
+==4275== Metric result:
+Invocations                               Metric Name                        Metric Description         Min         Max         Avg
+Device "Tesla K80 (0)"
+	Kernel: reduce2(int, float*, float*, float*)
+       9423                     dram_write_throughput            Device Memory Write Throughput  415.36MB/s  584.45MB/s  532.64MB/s
+       9423                      dram_read_throughput             Device Memory Read Throughput  0.00000B/s  238.62MB/s  22.320MB/s
+       9423                             flop_count_sp  Floating Point Operations(Single Precisi       67868       67868       67868
+	Kernel: Jacobi(float*, float*, float*, int)
+       9423                     dram_write_throughput            Device Memory Write Throughput  12.755GB/s  16.991GB/s  14.518GB/s
+       9423                      dram_read_throughput             Device Memory Read Throughput  0.00000B/s  880.86MB/s  424.15MB/s
+       9423                             flop_count_sp  Floating Point Operations(Single Precisi      112500      112500      112500
+
+
+=====================================================================
+
+==9327== Profiling application: ./hw04-16 200 1e-6
+==9327== Profiling result:
+
+Time(%)      Time     Calls       Avg       Min       Max  Name
+ 67.51%  489.41ms     16295  30.034us  29.854us  30.495us  reduce2(int, float*, float*, float*)
+ 22.18%  160.83ms     16295  9.8690us  9.4390us  10.687us  Jacobi(float*, float*, float*, int)
+ 10.30%  74.654ms     16296  4.5810us  4.1910us  25.599us  [CUDA memcpy DtoH]
+  0.01%  75.100us         3  25.033us  23.359us  26.430us  [CUDA memcpy HtoD]
+
+
+Device "Tesla K80 (0)"
+	Kernel: reduce2(int, float*, float*, float*)
+      16295                     dram_write_throughput            Device Memory Write Throughput  508.13MB/s  635.04MB/s  597.81MB/s
+      16295                      dram_read_throughput             Device Memory Read Throughput  0.00000B/s  156.50MB/s  16.118MB/s
+      16295                             flop_count_sp  Floating Point Operations(Single Precisi      119873      119873      119873
+	Kernel: Jacobi(float*, float*, float*, int)
+      16295                     dram_write_throughput            Device Memory Write Throughput  17.274GB/s  20.276GB/s  19.236GB/s
+      16295                      dram_read_throughput             Device Memory Read Throughput  0.00000B/s  557.16MB/s  114.51MB/s
+      16295                             flop_count_sp  Floating Point Operations(Single Precisi      200000      200000      200000
+
+
+
+

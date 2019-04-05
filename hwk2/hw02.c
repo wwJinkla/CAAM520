@@ -2,11 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <mpi.h>
-// TO compile: 
-//    gcc -O3 -o hw01 hw01.c -lm
 
-// TO run with tolerance 1e-4 and 4x4 loop currents
-//    ./hw01 4 1e-4
 
 #define PI 3.14159265359
 #define MAX(a,b) (((a)>(b))?(a):(b))
@@ -69,7 +65,7 @@ int solve(const int rank, const int size, const int local_row_size,
 		} 
 		
 		++iter;
-		
+
 		// calcualte global residual
 		MPI_Allreduce(&local_res2, &global_res2, 1, MPI_DOUBLE, MPI_SUM,
 			MPI_COMM_WORLD);
@@ -99,7 +95,7 @@ int main(int argc, char **argv){
 	MPI_Comm_size( MPI_COMM_WORLD, &size);
 
 	/* 
-		Design decision: allocate extra N%size rows to processor 0,
+		Design decision: allocate (N/size +2 + N%size) rows to processor 0,
 		and N/size + 2 to all other processes. 
 	*/  
 	int local_row_size = N/size + 2;
@@ -108,6 +104,7 @@ int main(int argc, char **argv){
 	}
 
 	double *local_u = (double*) calloc((local_row_size)*(N+2),sizeof(double));
+	// this is also local
 	double *f = (double*) calloc((local_row_size)*(N+2), sizeof(double));
 	double h = 2.0/(N+1);
 
@@ -125,12 +122,13 @@ int main(int argc, char **argv){
 	// Solve the linear system use (parallel) weighted Jacobi. Time
 	// the computation time
   double start = MPI_Wtime();
+
 	int iter = solve(rank, size, local_row_size, N, tol, local_u, f);
-	double elapsed = (MPI_Wtime() - start)/((double) size);
+
+	double elapsed = (MPI_Wtime() - start);
 
 	// TODO: assemble global_u here on rank 0; 
 	// This probebaly involves some pointer arithmetics.
-	// Also printf on rank 0;
 	double local_err = 0.0;
 	for(int i=1; i<=N; ++i){
 		for(int j=1; j<=local_row_size-2; ++j){
@@ -145,7 +143,7 @@ int main(int argc, char **argv){
 			0, MPI_COMM_WORLD);
 
 	double total_elapsed;
-  MPI_Reduce(&elapsed, &total_elapsed, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+  MPI_Reduce(&elapsed, &total_elapsed, 1, MPI_DOUBLE, MPI_MAX, 0, MPI_COMM_WORLD);
 	if(rank == 0){
 		printf("Iters: %d\n", iter);
 		printf("Max error: %lg\n", global_err);
@@ -153,13 +151,9 @@ int main(int argc, char **argv){
 
 	}
 
-	// printf("Iters: %d\n", iter);
-	// printf("Max error: %lg\n", err);
-	// printf("Memory usage: %lg GB\n", (N+2)*(N+2)*sizeof(double)/1.e9);
-	
 	MPI_Finalize();
-	//free(local_u);
-	//free(f);  
+	free(local_u);
+	free(f);  
 
 }
 	

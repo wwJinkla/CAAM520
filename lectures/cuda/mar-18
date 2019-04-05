@@ -1,0 +1,6 @@
+Mar18 Notes
+
+Performance metrics:
+- FP32/64 Performance GFLOP/s
+- Bandwidth Gb/s 
+- Roofline: arithmetic intensity  
