@@ -1,0 +1,22 @@
+Homework:  #2
+Student:   Wei Wu
+GitHub ID: wwJinkla
+
+Points: 101/100
+
+[x] Working finite difference discretization of Poisson's problem (15 pts.)
+[x] Working implementation of at least one solver (15 pts.)
+[x] Code works correctly when using multiple MPI ranks (20 pts.)
+    - Instead of sending an MPI message for each grid point, you can send the entire row at one.
+      This will simplify the code and improve performance.
+    - Note that while your communication strategy is correct, it leads to implicit synchronization between ranks:
+      Each rank except the last one will wait at their call to MPI_Send() until the next higher rank calls MPI_Recv().
+      Hence, you send one message at a time, when you could send all messages in parallel.
+      For example, if you have 4 ranks, then the messages from rank 2->3, 1->2, and 0->1 will always be sent one at a time in this particular order.
+[x] In addition to being correct, the code never stores full copies of matrices, vectors, etc. on any single process (10 pts.)
+[x] Diagram describing the partition of the grid (10 pts.)
+[x] Description of the algorithm in pseudo-code (10 pts.)
+[x] Description of debugging strategies (optional)
+[x] Testing of the code (20 pts.)
+[ ] Scalability (bonus, 5 pts.)
+    - You show some time measurements. Please discuss them. (-4 pts.)
