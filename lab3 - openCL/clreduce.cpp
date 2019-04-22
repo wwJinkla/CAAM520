@@ -10,6 +10,8 @@
 #include <CL/cl.h>
 #endif
 
+#define BDIM 64
+
 void pfn_notify(const char *errinfo, const void *private_info, size_t cb, void *user_data){
   fprintf(stderr, "OpenCL Error (via pfn_notify): %s\n", errinfo);
 }
@@ -138,9 +140,9 @@ int main(int argc, char **argv){
   oclInit(plat, dev, context, device, queue);
 
   const char *sourceFileName = "reduce.cl";
-  const char *functionName = "reduce2";
+  const char *functionName = "reduce3";
 
-  int BDIM = 32;
+  // int BDIM = 32;
   char flags[BUFSIZ];
   sprintf(flags, "-DBDIM=%d", BDIM);
 
@@ -171,7 +173,7 @@ int main(int argc, char **argv){
   // set thread array 
   int dim = 1;
   int Nt = BDIM;
-  int Ng = (N+Nt-1)/Nt;
+  int Ng = Nt*((N+Nt-1)/Nt);
   size_t local_dims[3] = {Nt,1,1};
   size_t global_dims[3] = {Ng,1,1};
 

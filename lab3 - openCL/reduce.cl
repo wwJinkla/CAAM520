@@ -1,4 +1,4 @@
-#define BDIM 32
+
 
 __kernel void reduce(int N, __global float *x, __global float *xout){
 
