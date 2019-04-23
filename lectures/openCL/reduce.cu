@@ -190,6 +190,7 @@ int main(void)
   printf("error = %d\n",reduction-N);
 
   // --- the following versions use only 1/2 the number of blocks
+	// NOTE: this only works for p_Nthreads*2^nS. Need to pad extra zeros to make it work
   dim3 halfblocks(Nblocks/2,1,1);  
   float*xouthalf = (float*)malloc(Nblocks/2*sizeof(float));
   cudaMalloc(&xouthalf_c, Nblocks/2*sizeof(float));

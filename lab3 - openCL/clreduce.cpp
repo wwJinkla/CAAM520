@@ -10,7 +10,7 @@
 #include <CL/cl.h>
 #endif
 
-#define BDIM 64
+#define BDIM 32
 
 void pfn_notify(const char *errinfo, const void *private_info, size_t cb, void *user_data){
   fprintf(stderr, "OpenCL Error (via pfn_notify): %s\n", errinfo);
@@ -136,19 +136,23 @@ int main(int argc, char **argv){
   cl_command_queue queue;
 
   cl_kernel kernel;
+	cl_kernel kernel1;
 
   oclInit(plat, dev, context, device, queue);
 
   const char *sourceFileName = "reduce.cl";
-  const char *functionName = "reduce3";
+  const char *functionName = "reduce2";
+  const char *functionName1 = "reduce3";
 
-  // int BDIM = 32;
   char flags[BUFSIZ];
   sprintf(flags, "-DBDIM=%d", BDIM);
 
   oclBuildKernel(sourceFileName, functionName,
 		 context, device,
 		 kernel, flags);
+  oclBuildKernel(sourceFileName, functionName1,
+		 context, device,
+		 kernel1, flags);
 
   // START OF PROBLEM IMPLEMENTATION 
   int N = atoi(argv[argc-1]); // array size  
@@ -164,21 +168,24 @@ int main(int argc, char **argv){
   // create device buffer and copy from host buffer
   cl_mem c_x = clCreateBuffer(context, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, sz, x, &err);
 
-
-  // now set kernel arguments
-  clSetKernelArg(kernel, 0, sizeof(int), &N);
-  clSetKernelArg(kernel, 1, sizeof(cl_mem), &c_x);
-
   
   // set thread array 
   int dim = 1;
   int Nt = BDIM;
-  int Ng = Nt*((N+Nt-1)/Nt);
+	int Nb = (N+Nt-1)/Nt;
+  int Ng = Nt*Nb;
   size_t local_dims[3] = {Nt,1,1};
   size_t global_dims[3] = {Ng,1,1};
 
-	float*xout = (float*)malloc(Ng*sizeof(float));
-	cl_mem c_xout = clCreateBuffer(context, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, sz, xout, &err);
+	float reduction = 0;
+
+#if 1
+	float*xout = (float*)calloc(Nb,sizeof(float));
+	size_t sz1 = Nb*sizeof(float);
+	cl_mem c_xout = clCreateBuffer(context, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, sz1, xout, &err);
+	// now set kernel arguments
+  clSetKernelArg(kernel, 0, sizeof(int), &N);
+  clSetKernelArg(kernel, 1, sizeof(cl_mem), &c_x);
 	clSetKernelArg(kernel, 2, sizeof(cl_mem), &c_xout);
 
   // queue up kernel 
@@ -189,17 +196,48 @@ int main(int argc, char **argv){
   clFinish(queue);
   
   // blocking read to host 
-  clEnqueueReadBuffer(queue, c_xout, CL_TRUE, 0, sz, xout, 0, 0, 0);
+  clEnqueueReadBuffer(queue, c_xout, CL_TRUE, 0, sz1, xout, 0, 0, 0);
   
   /* print out results */
   // check result
-  float reduction = 0;
-  for (int i = 0; i < Ng; i++){
+  for (int i = 0; i < Nb; i++){
     reduction += xout[i];
 		printf("xout[i] = %g\n", reduction);
   }
   printf("error = %g\n",reduction-N);
+	free(xout);
+#endif
 
+#if 1
+	//TODO: Fix this. Right now only works for BDIM*2^n
+	// --- the following versions use only 1/2 the number of blocks
+  size_t global_dims_half[3] = {(Nb/2)*Nt,1,1};
+  float*xouthalf = (float*)calloc(Nb/2,sizeof(float));
+	size_t sz2 = (Nb/2)*sizeof(float);
+
+  cl_mem c_xouthalf = clCreateBuffer(context, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, sz2, xouthalf, &err);
+	clSetKernelArg(kernel1, 0, sizeof(int), &N);
+  clSetKernelArg(kernel1, 1, sizeof(cl_mem), &c_x);
+  clSetKernelArg(kernel1, 2, sizeof(cl_mem), &c_xouthalf);
+
+  // queue up kernel 
+  clEnqueueNDRangeKernel(queue, kernel1, dim, 0, 
+			 global_dims_half, local_dims, 0, (cl_event*)NULL, NULL);
+
+  // blocking read from device to host 
+  clFinish(queue);
+  // blocking read to host 
+  clEnqueueReadBuffer(queue, c_xouthalf, CL_TRUE, 0, sz2, xouthalf, 0, 0, 0);
+
+  // check result
+	reduction = 0;
+  for (int i = 0; i < Nb/2; i++){
+    reduction += xouthalf[i];
+		printf("xouthalf[i] = %g\n", reduction);
+  }
+  printf("error = %g\n",reduction-N); 
+	free(xouthalf);
+#endif   
   exit(0);
   
 }
