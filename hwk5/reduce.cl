@@ -1,5 +1,3 @@
-
-
 __kernel void reduce(int N, __global float *x, __global float *xout){
 
   __local float s_x[BDIM];
@@ -112,6 +110,7 @@ __kernel void reduce3(int N, __global float *x, __global float *xout){
 
 
 // use all threads
+// NOTE: this kernel deos not work on Intel's CPUs
 __kernel void reduce4(int N, __global float *x, __global float *xout){
 
   __local volatile float s_x[BDIM]; // volatile for in-warp smem mods
