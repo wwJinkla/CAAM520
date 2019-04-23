@@ -21,7 +21,6 @@ __global__ void Jacobi(float* unew_c, float* u_c, float* f_c, int N){
 	const int j = blockIdx.y*blockDim.y + threadIdx.y;
 	const int id = i + j*(N+2); // x-index first
 
-	// warp divergence?  
 	if (i >= 1 && j >= 1 && i <= N && j <= N){
 		const float Ru = -u_c[id-(N+2)]-u_c[id+(N+2)]
 			-u_c[id-1]-u_c[id+1];

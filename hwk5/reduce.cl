@@ -1,4 +1,4 @@
-__kernel void reduce(int N, __global float *x, __global float *xout){
+__kernel void reduce2(int N, __global float *u, __global float *unew, __global float *res){
 
   __local float s_x[BDIM];
 
@@ -8,65 +8,12 @@ __kernel void reduce(int N, __global float *x, __global float *xout){
   // load smem
   s_x[tid] = 0;
   if (i < N){
-    s_x[tid] = x[i];
-  }
-  barrier(CLK_LOCAL_MEM_FENCE);
-
-  for (unsigned int s = 1; s < get_local_size(0); s *= 2){
-    // strided access
-    // s = 1 -> [0, 2, 4, 8, ...]
-    // s = 2 -> [0, 4, 8, 16, ...]
-
-    if (tid % (2*s)==0){ 
-      s_x[tid] += s_x[tid + s];
-    }
-    barrier(CLK_LOCAL_MEM_FENCE);
-  }   
-
-  if (tid==0){
-    xout[get_group_id(0)] = s_x[0];
-  }
-}
-
-
-__kernel void reduce1(int N, __global float *x,__global float *xout){
-
-  __local float s_x[BDIM];
-
-  const int tid = get_local_id(0);
-  const int i = get_group_id(0)*get_local_size(0) + tid;
-
-  // load smem
-  s_x[tid] = 0;
-  if (i < N){
-    s_x[tid] = x[i];
-  }
-  barrier(CLK_LOCAL_MEM_FENCE);
-
-  for (unsigned int s = 1; s < get_local_size(0); s *= 2){
-    int index = 2*s*tid;
-    if (index < get_local_size(0)){
-      s_x[index] += s_x[index+s]; // bank conflicts
-    }
-    barrier(CLK_LOCAL_MEM_FENCE);
-  }   
-
-  if (tid==0){
-    xout[get_group_id(0)] = s_x[0];
-  }
-}
-
-__kernel void reduce2(int N, __global float *x, __global float *xout){
-
-  __local float s_x[BDIM];
-
-  const int tid = get_local_id(0);
-  const int i = get_group_id(0)*get_local_size(0) + tid;
-
-  // load smem
-  s_x[tid] = 0;
-  if (i < N){
-    s_x[tid] = x[i];
+		const float unew1 = unew[i];
+		const float diff1 = unew1 - u[i];
+    s_x[tid] = diff1*diff1;
+		
+		// update
+		u[i] = unew1;
   }
   barrier(CLK_LOCAL_MEM_FENCE);
 
@@ -78,12 +25,13 @@ __kernel void reduce2(int N, __global float *x, __global float *xout){
   }   
 
   if (tid==0){
-    xout[get_group_id(0)] = s_x[0];
+    res[get_group_id(0)] = s_x[0];
   }
 }
 
 // use all threads
-__kernel void reduce3(int N, __global float *x, __global float *xout){
+// Note: It only works for N = BDIM*2^n for n = 0,1,2,...
+__kernel void reduce3(int N, __global float *u, __global float *unew, __global float *res){
 
   __local float s_x[BDIM];
 
@@ -92,7 +40,15 @@ __kernel void reduce3(int N, __global float *x, __global float *xout){
 
   s_x[tid] = 0;
   if (i < N){
-    s_x[tid] = x[i] + x[i + get_local_size(0)];
+		const float unew1 = unew[i];
+		const float unew2 = unew[i + get_local_size(0)];
+		const float diff1 = unew1 - u[i];
+		const float diff2 = unew2 - u[i + get_local_size(0)];
+    s_x[tid] = dff1*dff1 + diff2*diff2;
+
+		// update u
+		u[i] = unew1;
+		u[i + get_local_size(0)] = unew2; 
   }
   barrier(CLK_LOCAL_MEM_FENCE);
   
@@ -104,14 +60,14 @@ __kernel void reduce3(int N, __global float *x, __global float *xout){
   }   
 
   if (tid==0){
-    xout[get_group_id(0)] = s_x[0];
+    res[get_group_id(0)] = s_x[0];
   }
 }
 
 
 // use all threads
-// NOTE: this kernel deos not work on Intel's CPUs
-__kernel void reduce4(int N, __global float *x, __global float *xout){
+// NOTE: this kernel deos not work on Intel's CPUs. It only works for N = BDIM*2^n for n = 0,1,2,...
+__kernel void reduce4(int N, __global float *u, __global float *unew, __global float *res){
 
   __local volatile float s_x[BDIM]; // volatile for in-warp smem mods
 
@@ -120,8 +76,16 @@ __kernel void reduce4(int N, __global float *x, __global float *xout){
 
   s_x[tid] = 0;
   if (i < N){
-    s_x[tid] = x[i] + x[i + get_local_size(0)];
-  }
+		const float unew1 = unew[i];
+		const float unew2 = unew[i + get_local_size(0)];
+		const float diff1 = unew1 - u[i];
+		const float diff2 = unew2 - u[i + get_local_size(0)];
+    s_x[tid] = dff1*dff1 + diff2*diff2;
+
+		// update u
+		u[i] = unew1;
+		u[i + get_local_size(0)] = unew2;  
+	}
   barrier(CLK_LOCAL_MEM_FENCE);
   
   // stop at s = 64
@@ -142,7 +106,7 @@ __kernel void reduce4(int N, __global float *x, __global float *xout){
     s_x[tid] += s_x[tid + 1];   
   }
   if (tid==0){
-    xout[get_group_id(0)] = s_x[0];
+    res[get_group_id(0)] = s_x[0];
   }
 }
 

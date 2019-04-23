@@ -128,6 +128,35 @@ void oclBuildKernel(const char *sourceFileName,
 
 int main(int argc, char **argv){
    
+	cl_int            err;
+
+  int plat = 0;
+  int dev  = 0;
+
+  cl_context context;
+  cl_device_id device;
+  cl_command_queue queue;
+
+  cl_kernel jacobi_kernel;
+	cl_kernel reduce_kernel;
+	
+	oclInit(plat, dev, context, device, queue);
+  const char *jacobi_sfn = "jacobi.cl";
+	const char *reduce_sfn = "reduce.cl";
+  const char *jacobi_functionName = "jacobi";
+  const char *reduce_functionName = "reduce3";
+	
+	char flags[BUFSIZ];
+  sprintf(flags, "-DBDIM=%d", BDIM);
+	
+	oclBuildKernel(jacobi_sfn, jacobi_functionName,
+		 context, device,
+		 jacobi_kernel, flags);
+  oclBuildKernel(reduce_sfn, reduce_functionName,
+		 context, device,
+		 reduce_kernel, flags);
+	
+	// START OF PROBLEM IMPLEMENTATION
   int N = atoi(argv[1]);
   float tol = atof(argv[2]);
 
@@ -143,6 +172,7 @@ int main(int argc, char **argv){
     }
   } 
 
+	//TODO: convert the following part into OpenCL
   // cuda memory for Jacobi variables
   float *c_u, *c_f, *c_unew;
   cudaMalloc(&c_u, (N+2)*(N+2)*sizeof(float));
