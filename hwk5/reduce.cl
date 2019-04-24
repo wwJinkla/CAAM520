@@ -30,7 +30,7 @@ __kernel void reduce2(int N, __global float *u, __global float *unew, __global f
 }
 
 // use all threads
-// Note: It only works for N = BDIM*2^n for n = 0,1,2,...
+// Note: It only works for N = BDIM*2^n for n = 1,2,...
 __kernel void reduce3(int N, __global float *u, __global float *unew, __global float *res){
 
   __local float s_x[BDIM];
@@ -66,7 +66,7 @@ __kernel void reduce3(int N, __global float *u, __global float *unew, __global f
 
 
 // use all threads
-// NOTE: this kernel deos not work on Intel's CPUs. It only works for N = BDIM*2^n for n = 0,1,2,...
+// NOTE: this kernel deos not work on Intel's CPUs. It only works for N = BDIM*2^n for n = 1,2,...
 __kernel void reduce4(int N, __global float *u, __global float *unew, __global float *res){
 
   __local volatile float s_x[BDIM]; // volatile for in-warp smem mods
