@@ -139,81 +139,24 @@ res[get_group_id(0)] = s_x[0];
 
 \section{Correctness}
 
-I compare the results of my code with the serial version in homework 1 and the GPU version in homework 4. For any given number of threads, my code finishes with a similar number of iterations and reached similar Max errors as in the serial/CUDA version. For example, for a quick comparision, when N = 100, tol = 1e-6, my OpenCL GPU implementation finishes within 4411 iterations and Max error at 6.43794e-06. My CUDA GPU implementation finishes within 4414 iterations and Max error at 6.491e-06. My CPU implementations both finish with 4395 iterations, and Max error at 6.13072e-06. Discrepancies in the number of iterations and max error might be a result of implementation details and the usage of float for GPU implementations rather than double for the serial one.    
+I compare the results of my code with the serial version in homework 1 and the GPU version in homework 4. For any given number of threads, my code finishes with a similar number of iterations and reached similar Max errors as in the serial/CUDA version. For example, when N = 100, tol = 1e-6, my OpenCL GPU implementation finishes within 4411 iterations and Max error at 6.43794e-06. My CUDA GPU implementation finishes within 4414 iterations and Max error at 6.491e-06. My CPU implementation finish with 4395 iterations, and Max error at 6.13072e-06. Discrepancies in the number of iterations and max error might be a result of implementation details and the usage of float for GPU implementations instead of double for the serial one.    
 
 
 
 \section{Computational Performance}
-I experimented with different N and different thread-block size, and I documented their runtime, computational throughput, and arithmetic intensity of each kernels.
+I experimented on NOTS using Tesla K80 with different N and different thread-block size, and I documented their runtimes. For both GPU implementations, I documented the runtime for each kernel. For CPU code, I documented the total runtime. See log file for full details. Below is a sample where BDIM and pNthreads are set to 32.
 
-\begin{table}[ht]
-	\caption{threads/block = 1024 , tol = 1e-6, reduce2} % title of Table
-	\centering % used for centering table
-	\begin{tabular}{c c c c c c c} % centered columns (4 columns)
-		\hline\hline %inserts double horizontal lines
-		N & DMWT & DMRT & FC(float) &Time(s) & Bandwith & Throughput\\ [0.5ex] % inserts table
-		%heading
-		\hline % inserts single horizontal line
-		100 & 352.69MB/s & 46.016MB/s & 30914 & 31.612ms & 0.399GB/s & 9.78e-4 GFLOPs/sec\\ % inserting body of the table
-		150 & 423.72MB/s & 31.064MB/s & 68590 & 111.97ms & 0.455GB/s & 6.12e-4 GFLOPs/sec\\
-		200 & 503.20MB/s & 24.067MB/s & 121164 &305.65ms & 0.526GB/s & 3.96e-4 GLOPs/sec\\[1ex] % [1ex] adds vertical space
-		\hline %inserts single line
-	\end{tabular}
-	\label{table:nonlin} % is used to refer this table in the text
-\end{table}
-\FloatBarrier
+When N = 100, tol = 1e-6:
+For OpenCL, jacobi takes 55.692 ms in total, and reduce2 takes 61.618 ms in total. The code finishes in 4411 iterations. Hence on average, jacobi takes 12.626 μs, and reduces2 takes 13.969 μs. For CUDA, jacobi takes on average 4.985 μs, and reduces2 takes on average 7.24μs. The CPU code takes 0.66 s in total, and 149.626 μs per iteration. 
 
-\begin{table}[ht]
-	\caption{threads/block = 1024 , tol = 1e-6, Jacobi} % title of Table
-	\centering % used for centering table
-	\begin{tabular}{c c c c c c c} % centered columns (4 columns)
-		\hline\hline %inserts double horizontal lines
-		N & DMWT & DMRT & FC(float) &Time(s) & Bandwith & Throughput\\ [0.5ex] % inserts table
-		%heading
-		\hline % inserts single horizontal line
-		100 & 14.082GB/s & 193.68MB/s & 50000 & 21.873ms & 14.28GB/s & 2.38e-3 GFLOPs/sec\\ % inserting body of the table
-		150 & 14.806GB/s & 475.12MB/s & 112500 &55.946ms & 15.28GB/s & 2.01e-3 GFLOPs/sec\\
-		200 & 19.500GB/s & 119.75MB/s & 200000 &157.22ms & 19.62GB/s & 1.27e-3 GFLOPs/sec\\[1ex] % [1ex] adds vertical space
-		\hline %inserts single line
-	\end{tabular}
-	\label{table:nonlin} % is used to refer this table in the text
-\end{table}
-\FloatBarrier
+When N = 300, tol = 1e-6:
+For OpenCL, jacobi takes 769.590 ms, and reduce2 takes 1539.974 ms. The code finishes in 35570 iterations. On average, jacobi takes 21.636 μs, and redcue2 takes 43.294 μs. For CUDA, jacobi takes on average 38.011 μs, and reduce2 takes 16.933 μs. The CPU code takes 55.14 s in total, and 1550.183 μs per iteration. 
 
+\section{Performance Comparison}
+Obviously the GPU implementations are much faster than the CPU version for a large problem size. The CUDA implementation is also faster than the OpenCL implementation, observed across several problem sizes and threads-per-block.         
 
-\begin{table}[ht]
-	\caption{threads/block = 256 , tol = 1e-6, reduce2} % title of Table
-	\centering % used for centering table
-	\begin{tabular}{c c c c c c c} % centered columns (4 columns)
-		\hline\hline %inserts double horizontal lines
-		N & DMWT & DMRT & FC(float) &Time(s) & Bandwith & Throughput\\ [0.5ex] % inserts table
-		%heading
-		\hline % inserts single horizontal line
-		100 & 404.15MB/s & 34.044MB/s & 30573 & 46.088ms & 0.44GB/s & 6.63-4 GFLOPs/sec\\ % inserting body of the table
-		150 & 532.64MB/s & 22.320MB/s & 67868 & 170.75ms & 0.55GB/s & 3.97-4 GFLOPs/sec\\
-		200 & 597.81MB/s & 16.118MB/s & 119873 &489.41ms & 0.61GB/s & 2.45-4 GFLOPs/sec\\[1ex] % [1ex] adds vertical space
-		\hline %inserts single line
-	\end{tabular}
-	\label{table:nonlin} % is used to refer this table in the text
-\end{table}
-\FloatBarrier
+ 
 
-\begin{table}[ht]
-	\caption{threads/block = 256 , tol = 1e-6, Jacobi} % title of Table
-	\centering % used for centering table
-	\begin{tabular}{c c c c c c c} % centered columns (4 columns)
-		\hline\hline %inserts double horizontal lines
-		N & DMWT & DMRT & FC(float) &Time(s) & Bandwith & Throughput\\ [0.5ex] % inserts table
-		%heading
-		\hline % inserts single horizontal line
-		100 & 15.983GB/s & 309.13MB/s & 50000 & 21.601ms & 16.29GB/s & 2.31e-3 GFLOPs/sec\\ % inserting body of the table
-		150 & 14.518GB/s & 424.15MB/s & 112500 &64.363ms  & 14.94GB/s & 1.75e-3 GFLOPs/sec\\
-		200 & 19.236GB/s & 114.51MB/s & 200000 &160.83ms & 19.35GB/s & 1.24e-3 GFLOPs/sec\\[1ex] % [1ex] adds vertical space
-		\hline %inserts single line
-	\end{tabular}
-	\label{table:nonlin} % is used to refer this table in the text
-\end{table}
-\FloatBarrier
 
 
 
