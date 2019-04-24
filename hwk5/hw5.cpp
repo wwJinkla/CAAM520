@@ -149,8 +149,8 @@ int main(int argc, char **argv){
 	char flags[BUFSIZ];
   sprintf(flags, "-DBDIM=%d", BDIM);
 	
-	oclBuildKernel(jacobi_sfn, jacobi_functionName,
-		 context, device,
+	oclBuildKernel(jacobi_sfn, jacobi_functionName, 
+		 context, device, 
 		 jacobi_kernel, flags);
   oclBuildKernel(reduce_sfn, reduce_functionName,
 		 context, device,
@@ -172,59 +172,76 @@ int main(int argc, char **argv){
     }
   } 
 
-	//TODO: convert the following part into OpenCL
-  // cuda memory for Jacobi variables
-  float *c_u, *c_f, *c_unew;
-  cudaMalloc(&c_u, (N+2)*(N+2)*sizeof(float));
-  cudaMalloc(&c_f, (N+2)*(N+2)*sizeof(float));
-  cudaMalloc(&c_unew, (N+2)*(N+2)*sizeof(float));
-  cudaMemcpy(c_u,u, (N+2)*(N+2)*sizeof(float),cudaMemcpyHostToDevice);
-  cudaMemcpy(c_f,f, (N+2)*(N+2)*sizeof(float),cudaMemcpyHostToDevice);
-  cudaMemcpy(c_unew,unew,(N+2)*(N+2)*sizeof(float),cudaMemcpyHostToDevice);
+	// create device buffer and copy from host buffer
+	size_t sz0 = (N+2)*(N+2)*sizeof(float);
+	cl_mem c_u = clCreateBuffer(context, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, sz0, u, &err);
+	cl_mem c_f = clCreateBuffer(context, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, sz0, f, &err);
+	cl_mem c_unew = clCreateBuffer(context, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, sz0, unew, &err);  
 
   // run kernel, copy result back to CPU
-  int Nthreads = p_Nthreads; // good if it's a multiple of 32, can't have more than 1024
-  int Nblocks = (N + Nthreads-1)/Nthreads; 
-  dim3 threadsPerBlock(Nthreads,Nthreads,1);  
-  dim3 blocks(Nblocks,Nblocks,1);
+  int Nt = BDIM; // good if it's a multiple of 32, can't have more than 1024
+  int Nb = (N + Nt-1)/Nt;
+	int Ng = Nt*Nb; 
+  size_t local_dims[3] = {Nt,Nt,1};
+  size_t global_dims[3] = {Ng,Ng,1};
 
   // for reduce kernel
-  int Nthreads1D = p_Nthreads; 
-  int Nblocks1D = ((N+2)*(N+2) + Nthreads-1)/Nthreads; 
-  int halfNblocks1D = (Nblocks1D + 1)/2; 
-  dim3 threadsPerBlock1D(Nthreads1D,1,1);  
-  dim3 halfblocks1D(halfNblocks1D,1,1);
+  int Nt1D = BDIM; 
+  int Nb1D = ((N+2)*(N+2) + Nt-1)/Nt; 
+  int halfNb1D = (Nb1D + 1)/2;
+	int Ng1D = Nt1D*Nb1D;
+	int halfNg1D = Nt1D*halfNb1D; 
+  size_t local_dims1D[3] = {Nt1D,1,1};
+//size_t global_dims1D[3] = {Ng1D,1,1};
+  size_t global_dims1D[3] = {halfNg1D,1,1};
 
   // storage for residual
-  float *res = (float*) calloc(halfNblocks1D, sizeof(float));
-  float *c_res;
-  cudaMalloc(&c_res, halfNblocks1D*sizeof(float));
+  float *res = (float*) calloc(halfNb1D, sizeof(float));
+	size_t sz1 = halfNb1D*sizeof(float);
+	cl_mem c_res = clCreateBuffer(context, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, sz1, res, &err);
 
   int iter = 0;
   float r2 = 1.;
   while (r2 > tol*tol){
+		// Run Jacobi 		
+		clSetKernelArg(jacobi_kernel, 0, sizeof(int), &N);
+		clSetKernelArg(jacobi_kernel, 1, sizeof(cl_mem), &c_u);
+		clSetKernelArg(jacobi_kernel, 2, sizeof(cl_mem), &c_f);
+		clSetKernelArg(jacobi_kernel, 3, sizeof(cl_mem), &c_unew);
+		clEnqueueNDRangeKernel(queue, jacobi_kernel, 2, 0, global_dims, local_dims, 0, (cl_event*)NULL, NULL);
 
-    jacobi <<< blocks, threadsPerBlock >>> (N, c_u, c_f, c_unew);
-    reduce <<< halfblocks1D, threadsPerBlock1D >>> ((N+2)*(N+2), c_u, c_unew, c_res);
+  	// blocking read from device to host 
+  	clFinish(queue);
 
-    // finish block reduction on CPU
-    cudaMemcpy(res,c_res,halfNblocks1D*sizeof(float),cudaMemcpyDeviceToHost);
+		//Run reduce
+		int N1 = (N+2)*(N+2);
+		clSetKernelArg(reduce_kernel, 0, sizeof(int), &N1);
+		clSetKernelArg(reduce_kernel, 1, sizeof(cl_mem), &c_u);
+		clSetKernelArg(reduce_kernel, 2, sizeof(cl_mem), &c_unew);
+		clSetKernelArg(reduce_kernel, 3, sizeof(cl_mem), &c_res);
+		clEnqueueNDRangeKernel(queue, reduce_kernel, 1, 0, global_dims1D, local_dims1D, 0, (cl_event*)NULL, NULL);		
+
+		// blocking read from device to host 
+  	clFinish(queue);
+
+    // blocking read to host 
+		clEnqueueReadBuffer(queue, c_res, CL_TRUE, 0, sz1, res, 0, 0, 0);
     r2 = 0.f;
-    for (int j = 0; j < halfNblocks1D; ++j){
+    for (int j = 0; j < halfNb1D; ++j){
       r2 += res[j];
     }
 
     ++iter;
   }
  
-  cudaMemcpy(u,c_unew,(N+2)*(N+2)*sizeof(float),cudaMemcpyDeviceToHost);
+	clEnqueueReadBuffer(queue, c_unew, CL_TRUE, 0, sz0, u, 0, 0, 0);
 
-  float err = 0.0;
+  float error = 0.0;
   for (int i = 0; i < (N+2)*(N+2); ++i){
-    err = MAX(err,fabs(u[i] - f[i]/(h*h*2.0*PI*PI)));
+    error = MAX(error,fabs(u[i] - f[i]/(h*h*2.0*PI*PI)));
   }
   
-  printf("Max error: %f, r2 = %f, iterations = %d\n", err,r2,iter);
+  printf("Max error: %g, r2 = %g, iterations = %d\n", error,r2,iter);
 
 }
   

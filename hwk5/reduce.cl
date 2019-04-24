@@ -44,7 +44,7 @@ __kernel void reduce3(int N, __global float *u, __global float *unew, __global f
 		const float unew2 = unew[i + get_local_size(0)];
 		const float diff1 = unew1 - u[i];
 		const float diff2 = unew2 - u[i + get_local_size(0)];
-    s_x[tid] = dff1*dff1 + diff2*diff2;
+    s_x[tid] = diff1*diff1 + diff2*diff2;
 
 		// update u
 		u[i] = unew1;
@@ -80,7 +80,7 @@ __kernel void reduce4(int N, __global float *u, __global float *unew, __global f
 		const float unew2 = unew[i + get_local_size(0)];
 		const float diff1 = unew1 - u[i];
 		const float diff2 = unew2 - u[i + get_local_size(0)];
-    s_x[tid] = dff1*dff1 + diff2*diff2;
+    s_x[tid] = diff1*diff1 + diff2*diff2;
 
 		// update u
 		u[i] = unew1;
