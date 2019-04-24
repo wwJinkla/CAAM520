@@ -1,0 +1,132 @@
+N = 100, 1e-6
+OpenCL: 
+BDIM 16
+Max error: 6.43794e-06, r2 = 9.97046e-13, iterations = 4411
+jacobi total execution time is: 55.694 milliseconds 
+reduce total execution time is: 77.099 milliseconds 
+
+BDIM 32
+Max error: 6.43794e-06, r2 = 9.97046e-13, iterations = 4411
+jacobi total execution time is: 55.692 milliseconds 
+reduce total execution time is: 61.618 milliseconds 
+
+
+CUDA:
+N_pthreads 16
+Iters: 4414
+Max error: 6.491e-06
+==27101== Profiling application: ./myhw4 100 1e-6
+==27101== Profiling result:
+Time(%)      Time     Calls       Avg       Min       Max  Name
+ 56.53%  47.031ms      4414  10.654us  10.591us  11.071us  reduce2(int, float*, float*, float*)
+ 26.33%  21.902ms      4414  4.9610us  4.8310us  8.3190us  Jacobi(float*, float*, float*, int)
+
+
+N_pthreads 32
+Iters: 4414
+Max error: 6.491e-06
+==27918== Profiling application: ./myhw4 100 1e-6
+==27918== Profiling result:
+Time(%)      Time     Calls       Avg       Min       Max  Name
+ 47.40%  31.972ms      4414  7.2430us  7.1670us  7.5840us  reduce2(int, float*, float*, float*)
+ 32.62%  22.007ms      4414  4.9850us  4.8630us  6.5280us  Jacobi(float*, float*, float*, int)
+
+
+
+
+CPU:
+Iters: 4395
+Max error: 6.13072e-06
+Total Runtime: 0.66s
+
+
+
+==============================================================================
+N = 200, 1e-6
+OpenCL: 
+BDIM 16
+Max error: 1.32317e-05, r2 = 9.99907e-13, iterations = 16337
+jacobi total execution time is: 277.710 milliseconds 
+reduce total execution time is: 594.322 milliseconds 
+
+BDIM 32
+Max error: 1.32317e-05, r2 = 9.99907e-13, iterations = 16337
+jacobi total execution time is: 268.410 milliseconds 
+reduce total execution time is: 413.648 milliseconds 
+
+
+
+CUDA:
+N_pthreads 16
+Iters: 16295
+Max error: 1.35773e-05
+==27154== Profiling application: ./myhw4 200 1e-6
+==27154== Profiling result:
+Time(%)      Time     Calls       Avg       Min       Max  Name
+ 67.98%  499.62ms     16295  30.660us  30.494us  31.039us  reduce2(int, float*, float*, float*)
+ 22.14%  162.75ms     16295  9.9870us  9.5990us  11.199us  Jacobi(float*, float*, float*, int)
+
+
+N_pthreads 32
+Iters: 16295
+Max error: 1.35773e-05
+==27951== Profiling application: ./myhw4 200 1e-6
+==27951== Profiling result:
+Time(%)      Time     Calls       Avg       Min       Max  Name
+ 58.75%  310.40ms     16295  19.048us  18.911us  19.487us  reduce2(int, float*, float*, float*)
+ 30.20%  159.54ms     16295  9.7900us  9.1190us  10.848us  Jacobi(float*, float*, float*, int)
+
+
+CPU:
+Iters: 16002
+Max error: 1.62304e-05
+Total Runtime: 10.82s
+
+==============================================================================
+N = 300, 1e-6
+OpenCL: 
+BDIM 16
+Max error: 2.01282e-05, r2 = 9.97002e-13, iterations = 35570
+jacobi total execution time is: 872.306 milliseconds 
+reduce total execution time is: 2459.667 milliseconds 
+
+BDIM 32
+Max error: 2.01282e-05, r2 = 9.97003e-13, iterations = 35570
+jacobi total execution time is: 796.590 milliseconds 
+reduce total execution time is: 1539.974 milliseconds 
+
+
+CUDA:
+N_pthreads 16
+Iters: 35407
+Max error: 2.09378e-05
+==27575== Profiling application: ./myhw4 300 1e-6
+==27575== Profiling result:
+Time(%)      Time     Calls       Avg       Min       Max  Name
+ 72.70%  2.31561s     35407  65.399us  64.157us  65.886us  reduce2(int, float*, float*, float*)
+ 20.43%  650.63ms     35407  18.375us  17.823us  20.095us  Jacobi(float*, float*, float*, int)
+
+N_pthreads 32
+Iters: 35407
+Max error: 2.09378e-05
+==27992== Profiling application: ./myhw4 300 1e-6
+==27992== Profiling result:
+Time(%)      Time     Calls       Avg       Min       Max  Name
+ 63.71%  1.34588s     35407  38.011us  37.310us  38.431us  reduce2(int, float*, float*, float*)
+ 28.38%  599.58ms     35407  16.933us  16.287us  18.975us  Jacobi(float*, float*, float*, int)
+
+
+
+CPU:
+Iters: 34034
+Max error: 2.86504e-05
+Total Runtime: 55.14s
+
+
+
+
+
+
+
+
+

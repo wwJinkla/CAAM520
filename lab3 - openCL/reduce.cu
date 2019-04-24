@@ -1,6 +1,8 @@
+#include <stdio.h>
 
+#define p_Nthreads 128
 
-__kernel void reduce(int N, float *x, float *xout){
+__global__ void reduce(int N, float *x, float *xout){
 
   __shared__ float s_x[p_Nthreads];
 
@@ -31,7 +33,7 @@ __kernel void reduce(int N, float *x, float *xout){
 }
 
 
-__kernel void reduce1(int N, float *x, float *xout){
+__global__ void reduce1(int N, float *x, float *xout){
 
   __shared__ float s_x[p_Nthreads];
 
@@ -58,7 +60,7 @@ __kernel void reduce1(int N, float *x, float *xout){
   }
 }
 
-__kernel void reduce2(int N, float *x, float *xout){
+__global__ void reduce2(int N, float *x, float *xout){
 
   __shared__ float s_x[p_Nthreads];
 
@@ -85,7 +87,7 @@ __kernel void reduce2(int N, float *x, float *xout){
 }
 
 // use all threads
-__kernel void reduce3(int N, float *x, float *xout){
+__global__ void reduce3(int N, float *x, float *xout){
 
   __shared__ float s_x[p_Nthreads];
 
@@ -112,7 +114,7 @@ __kernel void reduce3(int N, float *x, float *xout){
 
 
 // use all threads
-__kernel void reduce4(int N, float *x, float *xout){
+__global__ void reduce4(int N, float *x, float *xout){
 
   __shared__ volatile float s_x[p_Nthreads]; // volatile for in-warp smem mods
 
@@ -190,10 +192,9 @@ int main(void)
   printf("error = %d\n",reduction-N);
 
   // --- the following versions use only 1/2 the number of blocks
-	// NOTE: this only works for p_Nthreads*2^nS. Need to pad extra zeros to make it work
   dim3 halfblocks(Nblocks/2,1,1);  
-  float*xouthalf = (float*)malloc(Nblocks/2*sizeof(float));
-  cudaMalloc(&xouthalf_c, Nblocks/2*sizeof(float));
+  float*xouthalf = (float*)malloc((Nblocks/2)*sizeof(float));
+  cudaMalloc(&xouthalf_c, (Nblocks/2)*sizeof(float));
 
   // version 4: fewer idle threads
   reduce3 <<< halfblocks, threadsPerBlock >>> (N, x_c, xouthalf_c);

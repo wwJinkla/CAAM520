@@ -13,7 +13,7 @@
 
 #define PI 3.14159265359f
 #define MAX(a,b) (((a)>(b))?(a):(b))
-#define BDIM 32
+#define BDIM 16
 
 void pfn_notify(const char *errinfo, const void *private_info, size_t cb, void *user_data){
   fprintf(stderr, "OpenCL Error (via pfn_notify): %s\n", errinfo);
@@ -144,7 +144,7 @@ int main(int argc, char **argv){
   const char *jacobi_sfn = "jacobi.cl";
 	const char *reduce_sfn = "reduce.cl";
   const char *jacobi_functionName = "jacobi";
-  const char *reduce_functionName = "reduce3";
+  const char *reduce_functionName = "reduce2";
 	
 	char flags[BUFSIZ];
   sprintf(flags, "-DBDIM=%d", BDIM);
@@ -185,33 +185,43 @@ int main(int argc, char **argv){
   size_t local_dims[3] = {Nt,Nt,1};
   size_t global_dims[3] = {Ng,Ng,1};
 
-  // for reduce kernel
+  // for reduce2 kernel
   int Nt1D = BDIM; 
   int Nb1D = ((N+2)*(N+2) + Nt-1)/Nt; 
-  int halfNb1D = (Nb1D + 1)/2;
 	int Ng1D = Nt1D*Nb1D;
-	int halfNg1D = Nt1D*halfNb1D; 
   size_t local_dims1D[3] = {Nt1D,1,1};
-//size_t global_dims1D[3] = {Ng1D,1,1};
-  size_t global_dims1D[3] = {halfNg1D,1,1};
+	size_t global_dims1D[3] = {Ng1D,1,1};
+
+//	int halfNb1D = (Nb1D + 1)/2;
+//	int halfNg1D = Nt1D*halfNb1D; 
+//	size_t global_dims1D[3] = {halfNg1D,1,1};
 
   // storage for residual
-  float *res = (float*) calloc(halfNb1D, sizeof(float));
-	size_t sz1 = halfNb1D*sizeof(float);
+  float *res = (float*) calloc(Nb1D, sizeof(float));
+	size_t sz1 = Nb1D*sizeof(float);
 	cl_mem c_res = clCreateBuffer(context, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, sz1, res, &err);
 
   int iter = 0;
   float r2 = 1.;
+	double jacobi_nanoSeconds = 0;
+	double reduce_nanoSeconds = 0;
   while (r2 > tol*tol){
 		// Run Jacobi 		
 		clSetKernelArg(jacobi_kernel, 0, sizeof(int), &N);
 		clSetKernelArg(jacobi_kernel, 1, sizeof(cl_mem), &c_u);
 		clSetKernelArg(jacobi_kernel, 2, sizeof(cl_mem), &c_f);
 		clSetKernelArg(jacobi_kernel, 3, sizeof(cl_mem), &c_unew);
-		clEnqueueNDRangeKernel(queue, jacobi_kernel, 2, 0, global_dims, local_dims, 0, (cl_event*)NULL, NULL);
+		
+  	cl_event event; // cl event for timing
+		clEnqueueNDRangeKernel(queue, jacobi_kernel, 2, 0, global_dims, local_dims, 0, (cl_event*)NULL, &event);
+		clWaitForEvents(1, &event); // 1 event, pointer to event list  
+  	clFinish(queue); // blocking read from device to host
+		
+  	cl_ulong start,end;
+  	clGetEventProfilingInfo(event, CL_PROFILING_COMMAND_START, sizeof(cl_ulong), &start, NULL);
+  	clGetEventProfilingInfo(event, CL_PROFILING_COMMAND_END, sizeof(cl_ulong), &end, NULL);
+		jacobi_nanoSeconds += end-start;
 
-  	// blocking read from device to host 
-  	clFinish(queue);
 
 		//Run reduce
 		int N1 = (N+2)*(N+2);
@@ -219,15 +229,19 @@ int main(int argc, char **argv){
 		clSetKernelArg(reduce_kernel, 1, sizeof(cl_mem), &c_u);
 		clSetKernelArg(reduce_kernel, 2, sizeof(cl_mem), &c_unew);
 		clSetKernelArg(reduce_kernel, 3, sizeof(cl_mem), &c_res);
-		clEnqueueNDRangeKernel(queue, reduce_kernel, 1, 0, global_dims1D, local_dims1D, 0, (cl_event*)NULL, NULL);		
-
-		// blocking read from device to host 
+		cl_event event1; // cl event for timing
+		clEnqueueNDRangeKernel(queue, reduce_kernel, 1, 0, global_dims1D, local_dims1D, 0, (cl_event*)NULL, &event1);		
+		clWaitForEvents(1, &event1);
   	clFinish(queue);
+		cl_ulong start1,end1;
+  	clGetEventProfilingInfo(event1, CL_PROFILING_COMMAND_START, sizeof(cl_ulong), &start1, NULL);
+  	clGetEventProfilingInfo(event1, CL_PROFILING_COMMAND_END, sizeof(cl_ulong), &end1, NULL);
+		reduce_nanoSeconds += end1-start1;
 
     // blocking read to host 
 		clEnqueueReadBuffer(queue, c_res, CL_TRUE, 0, sz1, res, 0, 0, 0);
     r2 = 0.f;
-    for (int j = 0; j < halfNb1D; ++j){
+    for (int j = 0; j < Nb1D; ++j){
       r2 += res[j];
     }
 
@@ -242,6 +256,7 @@ int main(int argc, char **argv){
   }
   
   printf("Max error: %g, r2 = %g, iterations = %d\n", error,r2,iter);
-
+  printf("jacobi total execution time is: %0.3f milliseconds \n",jacobi_nanoSeconds / 1e6);
+  printf("reduce total execution time is: %0.3f milliseconds \n",reduce_nanoSeconds / 1e6);
 }
   

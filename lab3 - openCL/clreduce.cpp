@@ -10,7 +10,7 @@
 #include <CL/cl.h>
 #endif
 
-#define BDIM 32
+#define BDIM 64
 
 void pfn_notify(const char *errinfo, const void *private_info, size_t cb, void *user_data){
   fprintf(stderr, "OpenCL Error (via pfn_notify): %s\n", errinfo);

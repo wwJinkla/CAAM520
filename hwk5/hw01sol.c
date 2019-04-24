@@ -1,6 +1,7 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 // TO compile: 
 //    gcc -O3 -o hw01 hw01.c -lm
@@ -61,6 +62,7 @@ int main(int argc, char **argv){
   
   int N = atoi(argv[1]);
   double tol = atof(argv[2]);
+	clock_t begin = clock();
 
   double *u = (double*) calloc((N+2)*(N+2), sizeof(double));
   double *f = (double*) calloc((N+2)*(N+2), sizeof(double));
@@ -80,11 +82,13 @@ int main(int argc, char **argv){
   for (int i = 0; i < (N+2)*(N+2); ++i){
     err = MAX(err,fabs(u[i] - f[i]/(h*h*2.0*PI*PI)));
   }
-  
+  clock_t end = clock();
+	double time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
+
   printf("Iters: %d\n", iter);
   printf("Max error: %lg\n", err);
-  printf("Memory usage: %lg GB\n", (N+2)*(N+2)*sizeof(double)/1.e9);
-  
+//  printf("Memory usage: %lg GB\n", (N+2)*(N+2)*sizeof(double)/1.e9);
+  printf("Total Runtime: %lg\n", time_spent);
   free(u);
   free(f);  
 
