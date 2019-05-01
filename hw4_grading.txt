@@ -1,0 +1,18 @@
+20/20 points: code compiles and runs
+
+11/15 points: good code practices
+- using (N+2)x(N+2) threads vs NxN (idle threads). 
+- may need to use ".f" to ensure single precision operations are used (may slow timing)
+
+15/15 points: discussion of parallelization strategy 
+
+15/15 points: discussion of code verification
+- should compare with N > 2...
+
+14/15 points: provide throughput and bandwidth
+- you need to try smaller numbers of threads per block (32x32 for Jacobi) to see good performance. 
+
+15/15 points: roofline and computational discussion
+
+Total: 95/100
+
