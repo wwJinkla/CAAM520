@@ -1,0 +1,24 @@
+Homework:  #5
+Student:   Wei Wu
+GitHub ID: wwJinkla
+
+Points: 97/100
+
+General remarks:
+
+[x] Correct finite difference discretization of Poisson's problem (5 pts.)
+[x] Correct algorithm for Jacobi solver (5 pts.)
+[x] Working OpenCL implementation (20 pts.)
+    - It is not necessary to set the kernel arguments each time you queue the kernel.
+[x] Verification of OpenCL code based on errors (10 pts.)
+    - Please consider presenting results like this in a table.
+[x] Comparison of errors to serial code (10 pts.)
+[x] Comparison of errors to GPU code (10 pts.)
+[x] Runtimes for OpenCL code (10 pts.)
+    - Please improve the presentation of the results.
+      It is very hard to read and compare the times when they are not presented in a table.
+      Also, some of the units are incorrect (seconds instead of microseconds).
+      (-3 pts.)
+[x] Runtimes for CPU code (10 pts.)
+[x] Runtimes for GPU code (10 pts.)
+[x] Discussion of results (10 pts.)
